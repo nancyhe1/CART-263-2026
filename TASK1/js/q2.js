@@ -1,7 +1,7 @@
 /**
- * Task1
+ * Task1 
  * Nancy He
- * 
+ * Question #2
  */
 
 "use strict";

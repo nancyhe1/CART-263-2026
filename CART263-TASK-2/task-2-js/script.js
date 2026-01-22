@@ -6,31 +6,58 @@ console.log("we are a go!")
 /*** ALL ANWSERS TO BE ADDED IN THE ALLOCATED SPACE */
 /*** START PART ONE ACCESS */ 
 /* 1: all paragraph elements */
-/***CODE */
+/***CODE */ console.log(document.querySelectorAll("p"));
 /***OUTPUT: 
- * 
+ * NodeList(9)
+ * 0: p#1
+ * 1: p#2.img-descript
+ * 2: p#3.img-descript
+ * 3: p#4.img-descript
+ * 4: p#5.img-descript
+ * 5: p#6.img-descript
+ * 6: p#7.img-descript
+ * 7: p#8.img-descript
+ * 8: p#9.img-descriptlength: 9
+ * [[Prototype]]: NodeList
  */
 
 
 /*************************************** */
 /* 2: only the first paragraph element */
-/***CODE */
+/***CODE */ console.log(document.querySelector("p"));
 /***OUTPUT: 
- * 
+ * <p id="1">
+ * "Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias perspiciatis blanditiis, et
+    laborum praesentium earum. Enim facere, quia commodi voluptate, quis asperiores, pariatur ducimus 
+    officiis non quasi officia sit veniam!
+    </p>"
  */
 
 
 /*************************************** */
 /* 3: all elements with the class inner-container */
-/***CODE */
+/***CODE */ console.log(document.querySelectorAll(".inner-container"));
 /***OUTPUT: 
- * 
+ * NodeList(8) [div.inner-container, div.inner-container, div.inner-container, div.inner-container, div.inner-container, div.inner-container, div.inner-container, div.inner-container]
+0: div.inner-container
+1: div.inner-container
+2: div.inner-container
+3: div.inner-container
+4: div.inner-container
+5: div.inner-container
+6: div.inner-container
+7: div.inner-container
+length: 8
+[[Prototype]: .NodeList
  */
 
 
 /*************************************** */
 /* 4: the last image element inside the element that has the class img-container */
-/***CODE */
+/***CODE */ let imgContainers = document.querySelectorAll(".img-container");
+            let lastImgContainer = imgContainers[imgContainers.length - 1];
+            let lastImage = lastImgContainer.querySelector("img");
+            console.log(lastImage);
 /***OUTPUT: 
  * 
  */
@@ -40,17 +67,22 @@ console.log("we are a go!")
 /* 5A: all h2 elements */
 /* 5B: length of the list in 5A */
 /* 5C: the text content of the first element in the list from 5A */
-/***CODE */
-/***OUTPUT: 
- * 
+/***CODE */ console.log(document.querySelectorAll("h2"));
+            console.log(document.querySelectorAll("h2").length);
+            console.log(document.querySelector("h2").textContent);
+/***OUTPUT: NodeList [h2]
+ * 0: h2
+ * length: 1
+ * [[Prototype]]: NodeList
+ * The header of this fancy page
  */
 
 
 /*************************************** */
 /* 6: the element with id name parent */
-/***CODE */
+/***CODE */ console.log(document.getElementById("parent"));
 /***OUTPUT: 
- * 
+ * <section id="parent"> (...) </section>
  */
 
 /*************************************** */

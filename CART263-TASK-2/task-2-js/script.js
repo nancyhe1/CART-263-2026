@@ -256,17 +256,17 @@ passing the current allPTagsThree element as the parent with each iteration.*/
 //         returnedDiv.style.left = `${col * 50}px`;  // Set left position based on column
 //         returnedDiv.style.top = `${row * 50}px`;  // Set top position based on row
 
-        // 2G: BONUS I: Make every div in an even numbered row have white background
-        // and otherwise let it have a background of cornflowerblue
-        // if (row % 2 === 0) {
-        //     returnedDiv.style.backgroundColor = 'white';  // Even row -> white background
-        // } else {
-        //     returnedDiv.style.backgroundColor = 'cornflowerblue';  // Odd row -> cornflowerblue background
-        // }
+//         //2G: BONUS I: Make every div in an even numbered row have white background
+//         //and otherwise let it have a background of cornflowerblue
+//         if (row % 2 === 0) {
+//             returnedDiv.style.backgroundColor = 'white';  // Even row -> white background
+//         } else {
+//             returnedDiv.style.backgroundColor = 'cornflowerblue';  // Odd row -> cornflowerblue background
+//         }
 
-        // 2H: BONUS II: For every div in an even numbered row, make it contain the text `EVEN`, 
-        // otherwise let it have the content `ODD`.
-        // returnedDiv.textContent = (row % 2 === 0) ? 'EVEN' : 'ODD';  // Even row -> "EVEN", odd row -> "ODD"
+//         //2H: BONUS II: For every div in an even numbered row, make it contain the text `EVEN`, 
+//         //otherwise let it have the content `ODD`.
+//         returnedDiv.textContent = (row % 2 === 0) ? 'EVEN' : 'ODD';  // Even row -> "EVEN", odd row -> "ODD"
 //     }
 // }
 
@@ -309,10 +309,48 @@ passing the current allPTagsThree element as the parent with each iteration.*/
     when dividing by three. */
 
 /***CODE */
+// const gridThreeParent = document.getElementById('new-grid-three');
 
+// for (let row = 0; row < 10; row++) {
+//     for (let col = 0; col < 10; col++) {
 
+//         const returnedDiv = customNewBoxCreate(gridThreeParent);
+
+//         // position the divs (same logic as grid 1)
+//         returnedDiv.style.position = 'absolute';
+//         returnedDiv.style.left = `${col * 50}px`;
+//         returnedDiv.style.top = `${row * 50}px`;
+
+//         // remainder logic
+//         const remainder = col % 3;
+
+//         if (remainder === 0) {
+//             returnedDiv.style.backgroundColor = 'red';
+//             returnedDiv.textContent = '0';
+//         } else if (remainder === 1) {
+//             returnedDiv.style.backgroundColor = 'orange';
+//             returnedDiv.textContent = '1';
+//         } else {
+//             returnedDiv.style.backgroundColor = 'yellow';
+//             returnedDiv.textContent = '2';
+//         }
+//     }
+// }
 /***EXPLANATION::
  * 
+ * This section creates a second grid using the same customNewBoxCreate function.
+ * The parent container for this grid is the element with the id `new-grid-three`.
+ * 
+ * A nested for loop is used to generate a 10x10 grid.
+ * Each div is positioned using absolute positioning with left and top values
+ * calculated from the column and row counters.
+ * 
+ * The modulo operator (%) is used on the column value:
+ *  - If col % 3 === 0, the div is colored red and displays "0"
+ *  - If col % 3 === 1, the div is colored orange and displays "1"
+ *  - If col % 3 === 2, the div is colored yellow and displays "2"
+ * 
+ * This creates repeating vertical color columns based on remainders.
  * 
  */
 
@@ -320,8 +358,5 @@ passing the current allPTagsThree element as the parent with each iteration.*/
 /*** END PART THREE CREATE */ 
 /*************************************** */
     
-
-
-
 
 }

@@ -1,5 +1,7 @@
 setup_B();
-/** THEME: CHAOS  */
+/** THEME: CHAOS  
+ * Team B: Nancy, Yejin (Aurora), Jake
+*/
 function setup_B() {
   console.log("in b");
   /**************************************************** */
@@ -138,41 +140,41 @@ function aniB(parentCanvas) {
 }
 
 
-
-  /****************ANI C ************************************ */
-  /** PUT ALL YOUR CODE FOR INTERACTIVE PATTERN C INSIDE HERE */
-  /****************ANI C************************************ */
-  /**************** TASK *******************************************
-   * YOU CAN USE ALL NOTES --- and see my examples in team-h.js for inspiration and possibly help:)
-   * 1: use the PROVIDED keyup/down callbacks `windowKeyDownRef` and/or `windowKeyUpnRef` to handle keyboard events
-   * 2: create an interactive pattern/sketch based on keyboard input. Anything goes.
-   * 
-   * NOTE::: PLEASE::: if you add any custom css PLEASE use the style.css and prefix any class names with your team label
-   * i.e. you want to create a custom div class and you are in "Team_A" then call your class TEAM_A_ANI_A_Div -
-   * this is so that your styles are not overriden by other teams.
-   * NOTE::: All your code is to be added here inside this function -
-   * remember you can define other functions inside....
-   * Do not change any code above or the HTML markup.
-   * **/
-
-  /* TASK: make an interactive pattern .. colors, shapes, sizes, text, images....
-   * using  ONLY key down and/or keyup -- any keys::
-   */
-
   function aniC(parentCanvas) {
       console.log("in ani-C -teamB");
+      let canvasC = document.querySelector("#ani_canvB_C");
 
     /*** THIS IS THE CALLBACK FOR KEY DOWN (* DO NOT CHANGE THE NAME *..) */
     windowKeyDownRef = function (e) {
-      //code for key down in here
-      console.log(e);
-      console.log("b-down");
+      // KeyDown makes squares
+      
+      let newDot = document.createElement('div');
+      canvasC.appendChild(newDot);
+      newDot.style.backgroundColor = "rgb(" + e.which + ", " + e.which + ", " + e.which + ")";
+      let size = Math.floor(Math.random() * 70);
+      newDot.style.width = size + "px";
+      newDot.style.height = size + "px";
+      newDot.style.position = "absolute";
+      newDot.style.left = (Math.floor(Math.random() * canvasC.offsetWidth) - size/2) + "px";
+      newDot.style.top = (Math.floor(Math.random() * canvasC.offsetHeight) - size/2) + "px";
+      newDot.style.rotate = Math.floor(Math.random() * 360) + "deg";
     };
 
     /*** THIS IS THE CALLBACK FOR KEY UP (*DO NOT CHANGE THE NAME..) */
     windowKeyUpRef = function (e) {
-      console.log(e);
-        console.log("b-up");
+      //KeyUp makes circles
+
+      let newDot = document.createElement('div');
+      canvasC.appendChild(newDot);
+      newDot.style.backgroundColor = "rgb(" + e.which + ", " + e.which + ", " + e.which + ")";
+      let size = Math.floor(Math.random() * 40);
+      newDot.style.width = size + "px";
+      newDot.style.height = size + "px";
+      newDot.style.position = "absolute";
+      newDot.style.left = (Math.floor(Math.random() * canvasC.offsetWidth) - size/2) + "px";
+      newDot.style.top = (Math.floor(Math.random() * canvasC.offsetHeight) - size/2) + "px";
+      newDot.style.rotate = Math.floor(Math.random() * 360) + "deg";
+      newDot.style.borderRadius = "500px";
     };
     //DO NOT REMOVE
     window.addEventListener("keydown", windowKeyDownRef);
@@ -195,6 +197,31 @@ function aniB(parentCanvas) {
    * Do not change any code above or the HTML markup.
    * **/
    function aniD(parentCanvas) {
-    console.log("in ani-D -teamB");
+      console.log("in ani-D -teamB");
+      let canvasD = document.querySelector("#ani_canvB_D");
+
+      setInterval(function() {
+        let newCircle = document.createElement('div');
+        canvasD.appendChild(newCircle);
+        let size = Math.floor(Math.random() * 30) +10;
+        newCircle.style.width = size + "px";
+        newCircle.style.height = size + "px";
+        newCircle.style.position = "absolute";
+        newCircle.style.left = (Math.floor(Math.random() * canvasD.offsetWidth) - size/2) + "px";
+        newCircle.style.top = (Math.floor(Math.random() * canvasD.offsetHeight) - size/2) + "px";
+        newCircle.style.backgroundColor = "blue";
+        newCircle.style.borderRadius = "50px";
+      }, 1000)
+
+      window.requestAnimationFrame(animate);
+
+      function animate() {
+        let children = canvasD.childNodes;
+        children.forEach(function(item) {
+          item.style.left = (Math.floor(Math.random() * canvasD.offsetWidth)) + "px";
+          item.style.top = (Math.floor(Math.random() * canvasD.offsetHeight)) + "px";
+        })
+        window.requestAnimationFrame(animate);
+      }
     }
 }

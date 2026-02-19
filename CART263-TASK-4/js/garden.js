@@ -15,6 +15,11 @@ let garden = {
       },
       //the grass element
       grassDiv: document.createElement("div"),
+
+      //adding beehives
+      beehives: [],
+      numBeeHives: 2,
+
     },
  
     /*sky object */
@@ -46,6 +51,20 @@ let garden = {
     garden.grass.grassDiv.style.background = `rgb(${garden.grass.grassColor.r},${garden.grass.grassColor.g},${garden.grass.grassColor.b})`;
     document.getElementsByTagName("main")[0].appendChild(garden.grass.grassDiv);
 
+    //create beehive
+    for (let i = 0; i < garden.numBeeHives; i++) {
+
+      let x = Math.random() * (window.innerWidth - 150);
+      let y = window.innerHeight - 250; // near grass
+
+      let size = Math.random() * 40 + 80;
+
+      let hive = new BeeHive(x, y, size);
+
+      garden.beehives.push(hive);
+
+    }
+    
     //create some flowers
     for (let i = 0; i < garden.numFlowers; i++) {
         // Create variables for our arguments for clarity

@@ -28,10 +28,13 @@ class FreeStyleObj {
       this.context.stroke(); //set the stroke
     }
 
-    update(){
-        //update freestyle
-       // console.log("free style update")
-       // this.x+=1;
-    }
+    update(volume) {
+    // 1: Microphone Input - Change wave amplitude and stroke color
+    this.yOffset = 10 + volume; 
+    this.stroke_color = `rgb(207, 159, ${Math.floor(volume * 2)})`;
+
+    // 2: Arbitrary Animation - Speed of the wave shifting over time
+    this.angularSpeed = 0.05 + (Math.sin(Date.now() * 0.001) * 0.02);
+}
   }
   

@@ -21,9 +21,12 @@ class RectangularObj {
     this.context.strokeRect(this.x, this.y,this.width, this.height);
   }
 
-  update(){
-    //update freestyle
-   // this.x+=1;
-    //console.log("rectangle update")
+ update(volume) {
+    // Change width and color based on sound
+    this.width = 50 + volume * 2; 
+    this.fill_color = `rgb(${100 + volume}, 100, 200)`;
+
+    // Arbitrary animation: slow vertical hover
+    this.y += Math.sin(Date.now() * 0.002) * 1;
 }
 }

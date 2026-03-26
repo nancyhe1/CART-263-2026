@@ -1,16 +1,37 @@
 window.onload = go_all_stuff;
+let analyser;
+let dataArray;
 
 function go_all_stuff(){
 console.log("go");
 
+//set up microphone
+function initMicrophone() {
+    if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function (stream) {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                source.connect(analyser);
+            })
+            .catch(function (err) {
+                console.log("Microphone error: " + err);
+            });
+    }
+}
+
 /* for loading the video */
 let videoEl = document.getElementById("video-birds");
 window.addEventListener("click", function(){
-    if(videoEl.currentTime ===0){
-        videoEl.play()
+    if(videoEl.currentTime === 0){
+        videoEl.play();
+        initMicrophone(); // Initialize mic on first click
     }
-})
-
+});
 
 videoEl.loop = true;
 
@@ -49,12 +70,32 @@ drawingBoardD.display();
 /*** RUN THE ANIMATION LOOP  */
 window.requestAnimationFrame(animationLoop);
 
-function animationLoop(){
-    /*** CALL THE EACH CANVAS TO ANIMATE INSIDE  */
+function animationLoop() {
+    let volume = 0;
+
+    // Only calculate if the mic is initialized
+    if (analyser) {
+        analyser.getByteFrequencyData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+        }
+        volume = sum / dataArray.length; // This is our "power" value
+    }
+
     drawingBoardA.animate();
-    drawingBoardB.animate();
-    drawingBoardC.animate();
-    drawingBoardD.run(videoEl)
+
+    // TASK 2: Update Board B with volume
+    theContexts[1].clearRect(0, 0, theCanvases[1].width, theCanvases[1].height);
+    drawingBoardB.objectsOnCanvas[0].update(volume); 
+    drawingBoardB.objectsOnCanvas[0].display();
+
+    // TASK 3: Update Board C with volume
+    theContexts[2].clearRect(0, 0, theCanvases[2].width, theCanvases[2].height);
+    drawingBoardC.objectsOnCanvas[0].update(volume);
+    drawingBoardC.objectsOnCanvas[0].display();
+
+    drawingBoardD.run(videoEl);
     window.requestAnimationFrame(animationLoop);
 }
 
@@ -81,27 +122,6 @@ function animationLoop(){
  * -> the code for the microphone has NOT been added  - you need to implement it correctly...
  *  
  */
-// Add these variables at the top of go_all_stuff()
-let audioContext, analyser, dataArray;
-
-// Inside your existing window.addEventListener("click", ...)
-window.addEventListener("click", function() {
-    // ... existing video play code ...
-
-    // New Microphone Setup
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-            let source = audioContext.createMediaStreamSource(stream);
-            source.connect(analyser);
-            analyser.fftSize = 256;
-            let bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-        }).catch(err => console.error("Mic access denied:", err));
-    }
-});
 
 /** TASK 3:(Drawing Board C) - 
  *  1: Affect the free-style shape by input from the microphone somehow, in real time...

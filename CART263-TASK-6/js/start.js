@@ -1,37 +1,37 @@
 window.onload = go_all_stuff;
+
 let analyser;
 let dataArray;
+let microphoneSetup = false;
+
+async function setupMic() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+        
+        const bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+        microphoneSetup = true;
+    } catch (err) {
+        console.error("Microphone access denied:", err);
+    }
+}
 
 function go_all_stuff(){
 console.log("go");
 
-//set up microphone
-function initMicrophone() {
-    if (navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(function (stream) {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioContext.createMediaStreamSource(stream);
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256;
-                const bufferLength = analyser.frequencyBinCount;
-                dataArray = new Uint8Array(bufferLength);
-                source.connect(analyser);
-            })
-            .catch(function (err) {
-                console.log("Microphone error: " + err);
-            });
-    }
-}
-
 /* for loading the video */
 let videoEl = document.getElementById("video-birds");
 window.addEventListener("click", function(){
-    if(videoEl.currentTime === 0){
-        videoEl.play();
-        initMicrophone(); // Initialize mic on first click
+    if(videoEl.currentTime ===0){
+        videoEl.play()
     }
-});
+})
+
 
 videoEl.loop = true;
 
@@ -50,7 +50,6 @@ drawingBoardA.addObj(new CircularObj(100,100,20,"#FFC300","#E6E6FA", drawingBoar
 drawingBoardA.display();
 
 
-
 let drawingBoardB = new DrawingBoard(theCanvases[1],theContexts[1],theCanvases[1].id);
 //add a rectangular object to canvas B
 drawingBoardB.addObj(new RectangularObj(100,100,50,70,"#FF5733","#E6E6FA",drawingBoardB.context))
@@ -66,39 +65,47 @@ let drawingBoardD = new DrawingBoard(theCanvases[3],theContexts[3],theCanvases[3
 drawingBoardD.addObj(new VideoObj(0,0,400,300,videoEl,drawingBoardD.context))
 drawingBoardD.display();
 
+window.addEventListener("click", function() {
+    if (!microphoneSetup) setupMic();
+});
 
 /*** RUN THE ANIMATION LOOP  */
 window.requestAnimationFrame(animationLoop);
 
 function animationLoop() {
     let volume = 0;
-
-    // Only calculate if the mic is initialized
-    if (analyser) {
+    if (microphoneSetup) {
         analyser.getByteFrequencyData(dataArray);
+        // Calculate average volume
         let sum = 0;
         for (let i = 0; i < dataArray.length; i++) {
             sum += dataArray[i];
         }
-        volume = sum / dataArray.length; // This is our "power" value
+        volume = sum / dataArray.length;
     }
 
     drawingBoardA.animate();
-
-    // TASK 2: Update Board B with volume
+    
+    // Pass volume to Board B (Rectangle) and Board C (Freestyle)
+    // We modify DrawingBoard.js or just call update/display manually here:
+    
+    // Board B
     theContexts[1].clearRect(0, 0, theCanvases[1].width, theCanvases[1].height);
-    drawingBoardB.objectsOnCanvas[0].update(volume); 
-    drawingBoardB.objectsOnCanvas[0].display();
+    drawingBoardB.objectsOnCanvas.forEach(obj => {
+        obj.update(volume); 
+        obj.display();
+    });
 
-    // TASK 3: Update Board C with volume
+    // Board C
     theContexts[2].clearRect(0, 0, theCanvases[2].width, theCanvases[2].height);
-    drawingBoardC.objectsOnCanvas[0].update(volume);
-    drawingBoardC.objectsOnCanvas[0].display();
+    drawingBoardC.objectsOnCanvas.forEach(obj => {
+        obj.update(volume);
+        obj.display();
+    });
 
     drawingBoardD.run(videoEl);
     window.requestAnimationFrame(animationLoop);
 }
-
 
 
 /** TASK 1:(Drawing Board A) - 

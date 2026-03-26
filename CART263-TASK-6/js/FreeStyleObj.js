@@ -29,12 +29,16 @@ class FreeStyleObj {
     }
 
     update(volume) {
-    // 1: Microphone Input - Change wave amplitude and stroke color
-    this.yOffset = 10 + volume; 
-    this.stroke_color = `rgb(207, 159, ${Math.floor(volume * 2)})`;
+    // 1. Oscillate: Change the angular speed or amplitude based on volume
+    // High volume makes the wave "wiggle" faster
+    this.angularSpeed = 0.05 + (volume * 0.001);
+    
+    // 2. Change Color: Use volume to affect the stroke color
+    let greenVal = Math.min(255, volume * 2);
+    this.stroke_color = `rgb(207, ${greenVal}, 255)`;
 
-    // 2: Arbitrary Animation - Speed of the wave shifting over time
-    this.angularSpeed = 0.05 + (Math.sin(Date.now() * 0.001) * 0.02);
+    // 3. Arbitrary Animation: Vertical drifting
+    this.yOffset = 20 + Math.sin(Date.now() * 0.001) * 10;
 }
   }
   

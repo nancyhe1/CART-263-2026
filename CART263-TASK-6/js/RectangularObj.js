@@ -21,12 +21,16 @@ class RectangularObj {
     this.context.strokeRect(this.x, this.y,this.width, this.height);
   }
 
- update(volume) {
-    // Change width and color based on sound
-    this.width = 50 + volume * 2; 
-    this.fill_color = `rgb(${100 + volume}, 100, 200)`;
+  update(volume) {
+    // 1. Change Scale: Use volume to affect width and height
+    // We use a base size of 50 and add volume (0-255) scaled down
+    this.width = 50 + (volume * 0.5);
+    this.height = 70 + (volume * 0.5);
 
-    // Arbitrary animation: slow vertical hover
-    this.y += Math.sin(Date.now() * 0.002) * 1;
+    // 2. Change Color: Shift the hue based on volume
+    this.fill_color = `rgb(${100 + volume}, ${50 + volume/2}, 50)`;
+
+    // 3. Arbitrary Animation: Horizontal oscillation
+    this.x += Math.sin(Date.now() * 0.002) * 2;
 }
 }

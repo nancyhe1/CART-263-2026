@@ -1,5 +1,5 @@
 window.onload = go_all_stuff;
-
+let audioContext;
 let analyser;
 let dataArray;
 let microphoneSetup = false;
@@ -7,19 +7,27 @@ let microphoneSetup = false;
 async function setupMic() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioContext.createMediaStreamSource(stream);
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
         source.connect(analyser);
-        
-        const bufferLength = analyser.frequencyBinCount;
-        dataArray = new Uint8Array(bufferLength);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
         microphoneSetup = true;
+        console.log("Mic is live and dataArray is ready");
     } catch (err) {
-        console.error("Microphone access denied:", err);
+        console.error("Mic error:", err);
     }
 }
+
+// Ensure the user interaction resumes or starts the mic
+window.addEventListener("click", function() {
+    if (!microphoneSetup) {
+        setupMic();
+    } else if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume(); // Browsers often suspend audio until a click
+    }
+});
 
 function go_all_stuff(){
 console.log("go");
@@ -65,18 +73,16 @@ let drawingBoardD = new DrawingBoard(theCanvases[3],theContexts[3],theCanvases[3
 drawingBoardD.addObj(new VideoObj(0,0,400,300,videoEl,drawingBoardD.context))
 drawingBoardD.display();
 
-window.addEventListener("click", function() {
-    if (!microphoneSetup) setupMic();
-});
-
 /*** RUN THE ANIMATION LOOP  */
 window.requestAnimationFrame(animationLoop);
 
 function animationLoop() {
     let volume = 0;
-    if (microphoneSetup) {
-        analyser.getByteFrequencyData(dataArray);
-        // Calculate average volume
+
+    if (microphoneSetup && analyser) {
+        // CRITICAL: This fills the array with the latest sound levels
+        analyser.getByteFrequencyData(dataArray); 
+        
         let sum = 0;
         for (let i = 0; i < dataArray.length; i++) {
             sum += dataArray[i];
@@ -84,26 +90,12 @@ function animationLoop() {
         volume = sum / dataArray.length;
     }
 
-    drawingBoardA.animate();
-    
-    // Pass volume to Board B (Rectangle) and Board C (Freestyle)
-    // We modify DrawingBoard.js or just call update/display manually here:
-    
-    // Board B
-    theContexts[1].clearRect(0, 0, theCanvases[1].width, theCanvases[1].height);
-    drawingBoardB.objectsOnCanvas.forEach(obj => {
-        obj.update(volume); 
-        obj.display();
-    });
-
-    // Board C
-    theContexts[2].clearRect(0, 0, theCanvases[2].width, theCanvases[2].height);
-    drawingBoardC.objectsOnCanvas.forEach(obj => {
-        obj.update(volume);
-        obj.display();
-    });
-
+    /*** CALL EACH CANVAS AND PASS THE VOLUME */
+    drawingBoardA.animate(volume); // Circle
+    drawingBoardB.animate(volume); // Rectangle (Task 2)
+    drawingBoardC.animate(volume); // Freestyle (Task 3)
     drawingBoardD.run(videoEl);
+    
     window.requestAnimationFrame(animationLoop);
 }
 

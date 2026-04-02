@@ -77,7 +77,7 @@ export class PlanetB {
         const randomLat = (Math.random() * 180) - 90;
         const randomLon = (Math.random() * 360) - 180;
     
-    placeModelOnSurface('models/TeamB/Red Bulborb.glb', randomLat, randomLon, 0.7);
+    placeModelOnSurface('models/TeamB/Red Bulborb.glb', randomLat, randomLon, 1.5);
     }
 
     // Spawn Flowers randomly

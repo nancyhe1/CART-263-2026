@@ -14,16 +14,16 @@ export class PlanetB {
         this.scene.add(this.group);
 
         // --- STEP 1: Create Planet ---
-        // Radius between 1.5 and 2 (using 1.8)
-        const geometry = new THREE.SphereGeometry(1.8, 32, 32);
+        const textureLoader = new THREE.TextureLoader();
+        const planetTexture = textureLoader.load('models/TeamB/planetTexture.png');
+        const geometry = new THREE.SphereGeometry(1.8, 64, 64); 
+
         const material = new THREE.MeshStandardMaterial({
-            color: 0x00f2ff, // Cyan/Ice color
-            metalness: 0.7,
-            roughness: 0.2,
-            transparent: true,
-            opacity: 0.9
+            map: planetTexture,
+            metalness: 0.1,
+            roughness: 0.8
         });
-        
+
         this.planetMesh = new THREE.Mesh(geometry, material);
         this.planetMesh.castShadow = true;
         this.planetMesh.receiveShadow = true;
@@ -36,28 +36,58 @@ export class PlanetB {
 
         // --- STEP 3: Load Blender Models ---
         this.loader = new GLTFLoader();
-        this.interactableModels = []; // For raycasting
+        this.interactableModels = []; 
 
-        // Example: Loading a "critter" or "prop"
-        // Replace 'path/to/your/model.glb' with your actual asset path
-        /*
-        this.loader.load('models/ice_crystal.glb', (gltf) => {
-            const model = gltf.scene;
-            model.scale.set(0.2, 0.2, 0.2);
-            
-            // Positioning on surface: Use spherical coordinates or set distance to planet radius
-            model.position.set(0, 1.8, 0); 
-            model.castShadow = true;
-            model.receiveShadow = true;
-            
-            this.group.add(model);
-            this.interactableModels.push(model);
+        // Define the helper function INSIDE the constructor
+        const placeModelOnSurface = (modelPath, lat, lon, scale = 0.2) => {
+    this.loader.load(modelPath, (gltf) => {
+        const model = gltf.scene;
+        model.scale.set(scale, scale, scale);
+
+        const radius = 1.8; // Your planet's radius
+        const phi = (90 - lat) * (Math.PI / 180);
+        const theta = (lon + 180) * (Math.PI / 180);
+
+        model.position.set(
+            -(radius * Math.sin(phi) * Math.cos(theta)),
+            radius * Math.cos(phi),
+            radius * Math.sin(phi) * Math.sin(theta)
+        );
+
+        const upVector = model.position.clone().normalize();
+        model.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), upVector);
+
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
         });
-        */
 
-        // Raycaster for interactions
+        this.group.add(model);
+        this.interactableModels.push(model); 
+    });
+};
+
+// 2. Spawn a specific number of Bulborbs randomly
+const numberOfBulborbs = 10; 
+
+for (let i = 0; i < numberOfBulborbs; i++) {
+    // Generate random Latitude (-90 to 90) and Longitude (-180 to 180)
+    const randomLat = (Math.random() * 180) - 90;
+    const randomLon = (Math.random() * 360) - 180;
+    
+    // Call the function using your Red Bulborb path
+    placeModelOnSurface('models/TeamB/Red Bulborb.glb', randomLat, randomLon, 0.5);
+}
+
+// You can still place your single trees or rocks manually
+placeModelOnSurface('models/TeamB/tree.glb', 45, 30, 0.15);
+placeModelOnSurface('models/TeamB/rock.glb', -20, 120, 0.1);
+
+        // --- STEP 4: Interaction ---
         this.raycaster = new THREE.Raycaster();
-    }
+    } // END OF CONSTRUCTOR
 
     createMoon(radius, dist, speed, color) {
         const moonGeo = new THREE.SphereGeometry(radius, 16, 16);
@@ -67,7 +97,6 @@ export class PlanetB {
         moon.castShadow = true;
         moon.receiveShadow = true;
         
-        // Custom properties for animation
         moon.userData = {
             distance: dist,
             speed: speed,
@@ -87,34 +116,26 @@ export class PlanetB {
         // Rotate planet
         this.group.rotation.y += delta * 0.5;
 
-        // --- STEP 2 (Update): Moon Orbits ---
+        // Update Moon Orbits
         this.moons.forEach(moon => {
             moon.userData.angle += moon.userData.speed;
             moon.position.x = Math.cos(moon.userData.angle) * moon.userData.distance;
             moon.position.z = Math.sin(moon.userData.angle) * moon.userData.distance;
         });
-
-        // --- STEP 4 (Update): Animation on Click ---
-        // If you have an animation flag, update it here (e.g., jumping critters)
     }
 
     click(mouse, scene, camera) {
-        // --- STEP 4: Raycasting ---
         this.raycaster.setFromCamera(mouse, camera);
-        
-        // Check intersections with the planet and models
         const intersects = this.raycaster.intersectObjects(this.group.children, true);
 
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
             
-            // Basic "Jump" animation using a simple Scale Pulse
+            // Animation for planet/models
             clickedObject.scale.set(1.5, 1.5, 1.5);
             setTimeout(() => {
                 clickedObject.scale.set(1, 1, 1);
             }, 200);
-
-            console.log("Team B Planet or Model clicked!", clickedObject);
         }
     }
 }

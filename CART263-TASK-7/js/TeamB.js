@@ -13,7 +13,7 @@ export class PlanetB {
         this.group = new THREE.Group();
         this.scene.add(this.group);
 
-        // --- STEP 1: Create Planet ---
+        // Create Planet
         const textureLoader = new THREE.TextureLoader();
         const planetTexture = textureLoader.load('models/TeamB/planetTexture.png');
         const geometry = new THREE.SphereGeometry(1.8, 64, 64); 
@@ -29,18 +29,18 @@ export class PlanetB {
         this.planetMesh.receiveShadow = true;
         this.group.add(this.planetMesh);
 
-        // --- STEP 2: Orbiting Moons ---
+        // orbiting moons
         this.moons = [];
         this.createMoon(0.4, 3.5, 0.02, 0xffffff); // Moon 1
         this.createMoon(0.2, 5, 0.035, 0xaaaaaa);  // Moon 2
 
-        // --- STEP 3: Load Blender Models ---
+        // loading the blender model
         this.loader = new GLTFLoader();
         this.interactableModels = []; 
 
         // Define the helper function INSIDE the constructor
         const placeModelOnSurface = (modelPath, lat, lon, scale = 0.2) => {
-    this.loader.load(modelPath, (gltf) => {
+        this.loader.load(modelPath, (gltf) => {
         const model = gltf.scene;
         model.scale.set(scale, scale, scale);
 
@@ -69,23 +69,30 @@ export class PlanetB {
     });
 };
 
-// 2. Spawn a specific number of Bulborbs randomly
-const numberOfBulborbs = 10; 
+    // Spawn Bulborbs randomly
+    const numberOfBulborbs = 10; 
 
-for (let i = 0; i < numberOfBulborbs; i++) {
-    // Generate random Latitude (-90 to 90) and Longitude (-180 to 180)
-    const randomLat = (Math.random() * 180) - 90;
-    const randomLon = (Math.random() * 360) - 180;
+    for (let i = 0; i < numberOfBulborbs; i++) {
+
+        const randomLat = (Math.random() * 180) - 90;
+        const randomLon = (Math.random() * 360) - 180;
     
-    // Call the function using your Red Bulborb path
-    placeModelOnSurface('models/TeamB/Red Bulborb.glb', randomLat, randomLon, 0.5);
-}
+    placeModelOnSurface('models/TeamB/Red Bulborb.glb', randomLat, randomLon, 0.7);
+    }
 
-// You can still place your single trees or rocks manually
-placeModelOnSurface('models/TeamB/tree.glb', 45, 30, 0.15);
-placeModelOnSurface('models/TeamB/rock.glb', -20, 120, 0.1);
+    // Spawn Flowers randomly
+    const numberOfFlowers = 10; 
 
-        // --- STEP 4: Interaction ---
+    for (let i = 0; i < numberOfFlowers; i++) {
+
+        const randomLat = (Math.random() * 180) - 90;
+        const randomLon = (Math.random() * 360) - 180;
+    
+    placeModelOnSurface('models/TeamB/Desert marigold.glb', randomLat, randomLon, 0.1);
+    }
+
+
+        // for the sun
         this.raycaster = new THREE.Raycaster();
     } // END OF CONSTRUCTOR
 
@@ -108,15 +115,15 @@ placeModelOnSurface('models/TeamB/rock.glb', -20, 120, 0.1);
     }
 
     update(delta) {
-        // Orbit around sun
+        // orbit around sun
         this.angle += this.orbitSpeed * delta * 30;
         this.group.position.x = Math.cos(this.angle) * this.orbitRadius;
         this.group.position.z = Math.sin(this.angle) * this.orbitRadius;
         
-        // Rotate planet
+        // rotate planet
         this.group.rotation.y += delta * 0.5;
 
-        // Update Moon Orbits
+        // update moon orbits
         this.moons.forEach(moon => {
             moon.userData.angle += moon.userData.speed;
             moon.position.x = Math.cos(moon.userData.angle) * moon.userData.distance;
@@ -131,7 +138,7 @@ placeModelOnSurface('models/TeamB/rock.glb', -20, 120, 0.1);
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
             
-            // Animation for planet/models
+            // animation for planet/models
             clickedObject.scale.set(1.5, 1.5, 1.5);
             setTimeout(() => {
                 clickedObject.scale.set(1, 1, 1);
